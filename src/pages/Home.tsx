@@ -5,8 +5,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { WolfEye, BackgroundTheme } from "../components/BackgroundTheme";
 import { auth } from "../lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useLanguage } from "../contexts/LanguageContext";
 
-const kingsLeaders = ["بيرسيفال", "no time"];
+const kingsLeaders = ["Percival", "no time"];
 const towerLeaders = ["云公馆", "보단이", "LanceHiro"];
 const kingsSupporters = ["Venus S2", "Avatar", "Ally", "ゆきちゃん", "Jharoth", "Asif", "Mineaw", "Desperado", "Sona", "RedDotz", "DNA", "MOUSA", "『σXσ』", "梁小凱", "Alaz", "Ꮢᴇᴅ〆Evɪʟ"];
 const towerSupporters = ["NATi", "Polar Bear", "دحوم", "DARK", "kondom bocor", "Gulu_Gulu", "Ahmed", "Dracula", "02AB", "QryptoxX", "Dratharox", "Brigade", "오징어게임", "Batman", "F5M", "sang", "MAGO", "KingArthur", "Chaos", "AlfonsoG", "ADY", "LaShawna", "RoboticLoger"];
@@ -15,14 +16,14 @@ const warLeaders = [
   { name: "云公馆", gradient: "from-orange-500 to-orange-700" },
   { name: "LanceHiro", gradient: "from-gray-600 to-gray-800" },
   { name: "no time", gradient: "from-cyan-500 to-cyan-700" },
-  { name: "بيرسيفال", gradient: "from-cyan-500 to-cyan-700" },
+  { name: "Percival", gradient: "from-cyan-500 to-cyan-700" },
   { name: "Venus S2", gradient: "from-gray-600 to-gray-800" },
   { name: "보단이", gradient: "from-orange-500 to-orange-700" },
 ];
 
 const characterAvatars: Record<string, string> = {
   "no time": "https://got-global-avatar.akamaized.net/avatar/2026/04/20/z5ZJ8y_1776714284.png",
-  "بيرسيفال": "https://got-global-avatar.akamaized.net/avatar/2026/03/26/gKzvoG_1774564335.png",
+  "Percival": "https://got-global-avatar.akamaized.net/avatar/2026/03/26/gKzvoG_1774564335.png",
   "LanceHiro": "https://got-global-avatar.akamaized.net/avatar/2026/05/06/gKmyYG_1778025634.png",
   "Avatar": "https://got-global-avatar.akamaized.net/avatar/2026/04/07/pKMBky_1775547583.png",
   "Venus S2": "https://got-global-avatar.akamaized.net/avatar/2026/03/26/m6vZ8p_1774542997.png",
@@ -141,6 +142,7 @@ const HeroCard = ({ name }: { name: string }) => {
 };
 
 const LoginGate = ({ onLogin }: { onLogin: () => void }) => {
+  const { t, language } = useLanguage();
   const [state, setState] = useState<'initial' | 'inputting' | 'verifying' | 'error' | 'success'>('initial');
   const [password, setPassword] = useState('');
   const containerRef = useRef<HTMLFormElement>(null);
@@ -225,7 +227,7 @@ const LoginGate = ({ onLogin }: { onLogin: () => void }) => {
         <div 
           className={`absolute inset-0 left-[70px] flex items-center justify-center font-bold text-white tracking-wide pointer-events-none transition-opacity duration-300 ${!isInputState ? 'opacity-100' : 'opacity-0'}`}
         >
-          <span className="text-[16px] sm:text-[17px] whitespace-nowrap drop-shadow-sm text-[#e4e4e7]">تسجيل الدخول</span>
+          <span className="text-[16px] sm:text-[17px] whitespace-nowrap drop-shadow-sm text-[#e4e4e7]">{t('loginText')}</span>
         </div>
 
         {/* Input for typing */}
@@ -234,10 +236,10 @@ const LoginGate = ({ onLogin }: { onLogin: () => void }) => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="الرمز السري..."
+          placeholder={t('passwordPlaceholder')}
           disabled={!isInputState}
-          className={`w-full h-full bg-transparent text-white pl-[70px] pr-12 outline-none transition-opacity duration-300 text-right opacity-0 ${isInputState ? 'opacity-100 pointer-events-auto' : 'pointer-events-none'}`}
-          dir="rtl"
+          className={`w-full h-full bg-transparent text-white pl-[70px] ${language === 'en' ? 'text-left pl-[75px] pr-12' : 'text-right pr-12'} outline-none transition-opacity duration-300 opacity-0 ${isInputState ? 'opacity-100 pointer-events-auto' : 'pointer-events-none'}`}
+          dir={language === 'ar' ? 'rtl' : 'ltr'}
         />
 
         {/* Submit arrow on the RIGHT when typing */}
@@ -258,6 +260,7 @@ const LoginGate = ({ onLogin }: { onLogin: () => void }) => {
 };
 
 export default function Home() {
+  const { t, language, toggleLanguage } = useLanguage();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isYoutubeModalOpen, setIsYoutubeModalOpen] = useState(false);
@@ -356,28 +359,41 @@ export default function Home() {
     <BackgroundTheme>
       <main className="min-h-screen flex flex-col items-center justify-start relative overflow-x-hidden pb-20 pt-16 sm:pt-24 lg:pt-32">
         
-        {/* Floating Player Bar */}
+        {/* Floating Player and Header Bar */}
         <div className="fixed top-0 inset-x-0 z-[60] bg-[#080b0f]/90 backdrop-blur-md border-b border-white/5 shadow-sm">
-          <div className="w-full h-8 flex items-center justify-center mx-auto max-w-7xl px-4 lg:px-8">
-            <button 
-              onClick={togglePlay}
-              className="flex items-center gap-2 group w-full h-full"
-              title={isPlaying ? "إيقاف الموسيقى" : "تشغيل الموسيقى"}
-            >
-              <div className={`transition-all duration-300 ${isPlaying ? 'text-cyan-400' : 'text-gray-400 group-hover:text-white'}`}>
-                {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              </div>
-              <span className="text-xs font-medium text-gray-400 group-hover:text-gray-200 transition-colors duration-300">
-                {isPlaying ? 'الموسيقى' : 'تشغيل الموسيقى'}
-              </span>
-              {isPlaying && (
-                <div className="flex items-end h-2.5 gap-[2px] mr-2 opacity-80">
-                  <motion.div animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
-                  <motion.div animate={{ height: ["100%", "30%", "100%"] }} transition={{ repeat: Infinity, duration: 0.8, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
-                  <motion.div animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
+          <div className="w-full h-10 flex items-center justify-between mx-auto px-4 lg:px-6">
+            {/* Language Toggle Fixed on Left */}
+            <div dir="ltr" className="flex items-center">
+              <button 
+                onClick={toggleLanguage}
+                className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-gray-300 transition-colors"
+              >
+                {t('languageButton')}
+              </button>
+            </div>
+
+            {/* Music Player Fixed on Center-Right */}
+            <div className="flex-1 flex justify-end">
+              <button 
+                onClick={togglePlay}
+                className="flex items-center gap-2 group h-full px-2"
+                title={isPlaying ? t('musicStop') : t('musicPlay')}
+              >
+                <div className={`transition-all duration-300 ${isPlaying ? 'text-cyan-400' : 'text-gray-400 group-hover:text-white'}`}>
+                  {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                 </div>
-              )}
-            </button>
+                <span className="text-xs font-medium text-gray-400 group-hover:text-gray-200 transition-colors duration-300">
+                  {isPlaying ? t('musicLabel') : t('musicPlay')}
+                </span>
+                {isPlaying && (
+                  <div className="flex items-end h-2.5 gap-[2px] opacity-80" dir="ltr">
+                    <motion.div animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
+                    <motion.div animate={{ height: ["100%", "30%", "100%"] }} transition={{ repeat: Infinity, duration: 0.8, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
+                    <motion.div animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
+                  </div>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -440,7 +456,7 @@ export default function Home() {
               </div>
               
               <div className="text-xl sm:text-3xl md:text-4xl font-bold uppercase tracking-[0.6em] sm:tracking-[0.8em] mt-6 text-white/90 drop-shadow-md">
-                ALLIANCE
+                {t('alliance')}
               </div>
 
               <div className="md:hidden text-xl font-mono text-gray-400 opacity-80 italic mt-4">
@@ -455,8 +471,8 @@ export default function Home() {
               <div className="w-full transition-all duration-1000">
                 <div className="mt-8 sm:mt-12 relative flex flex-col items-center w-full">
                   <div className="relative inline-block mb-4">
-                    <div className="text-2xl sm:text-3xl md:text-5xl whitespace-nowrap font-black text-white pb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" dir="rtl">
-                      خطة معركة قلعة الملك
+                    <div className="text-2xl sm:text-3xl md:text-5xl whitespace-nowrap font-black text-white pb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                      {t('battlePlanTitle')}
                     </div>
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_2px_rgba(34,211,238,0.6)]" />
                   </div>
@@ -468,7 +484,6 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     className="w-full max-w-lg mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-8 sm:p-10 relative overflow-hidden shadow-2xl flex flex-col items-center text-center mt-2 mb-20"
-                    dir="rtl"
                   >
                     <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-cyan-500/10 via-transparent to-orange-500/10 blur-xl opacity-50 rounded-2xl" />
                     
@@ -480,16 +495,16 @@ export default function Home() {
                     </div>
 
                     <h2 className="text-2xl sm:text-3xl font-black text-white mb-3 drop-shadow-md relative z-10">
-                      الخطة محمية
+                      {t('planProtectedTitle')}
                     </h2>
                     
                     <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-8 font-medium relative z-10">
-                      بحاجة إلى تسجيل الدخول من أجل رؤية الخطة
+                      {t('planProtectedDesc')}
                     </p>
 
                     <div className="bg-[#121316]/80 border border-white/5 py-4 px-6 rounded-xl w-full relative z-10 shadow-inner">
                       <p className="text-sm sm:text-base text-gray-400 font-medium tracking-wide leading-relaxed">
-                        لطلب كلمة السر تواصل مع القائد 
+                        {t('contactLeader')}
                         <span className="block mt-2 text-xl font-black text-orange-400 tracking-widest drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]">MOUSA</span>
                       </p>
                     </div>
@@ -502,7 +517,6 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
                   className="mt-6 w-full max-w-2xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-6 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   {/* Decorative background glow */}
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-cyan-500/10 via-transparent to-orange-500/10 blur-xl opacity-50 rounded-2xl" />
@@ -511,7 +525,7 @@ export default function Home() {
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-5 relative drop-shadow-md text-center sm:text-right">المقدمة</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-5 relative drop-shadow-md text-center sm:text-start">{t('introTitle')}</h2>
                   
                   <div className="space-y-4 relative">
                     <div className="flex flex-col sm:flex-row gap-4">
@@ -519,8 +533,8 @@ export default function Home() {
                         <div className="p-2.5 rounded-lg bg-cyan-500/20 text-cyan-400 shrink-0 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
                           <Clock className="w-5 h-5" />
                         </div>
-                        <p className="text-base sm:text-lg text-gray-200 font-medium leading-tight">
-                          المعركة تستمر <span className="font-bold text-cyan-400 ml-1">5 ساعات</span>
+                        <p className="text-base sm:text-lg text-gray-200 font-medium leading-tight text-start">
+                          {t('battleDuration')} <span className="font-bold text-cyan-400 mx-1">{t('hours5')}</span>
                         </p>
                       </div>
                       
@@ -529,7 +543,7 @@ export default function Home() {
                           <Target className="w-5 h-5" />
                         </div>
                         <p className="text-base sm:text-lg text-gray-200 font-medium leading-tight">
-                          <span className="font-bold text-orange-400">المطلوب ساعتين ونصف</span>
+                          <span className="font-bold text-orange-400">{t('requiredDuration')}</span>
                         </p>
                       </div>
                     </div>
@@ -539,52 +553,52 @@ export default function Home() {
                          <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-400 shrink-0 shadow-[0_0_10px_rgba(251,191,36,0.3)]">
                            <ListChecks className="w-5 h-5" />
                          </div>
-                         <h3 className="text-lg sm:text-xl font-bold text-amber-100">تعليمات هامة للمعركة</h3>
+                         <h3 className="text-lg sm:text-xl font-bold text-amber-100">{t('importantInstructions')}</h3>
                       </div>
-                      <div className="mt-1 pr-3 border-r-[3px] border-amber-500/30 mr-2">
+                      <div className={`mt-1 ${language === 'ar' ? 'pr-3 border-r-[3px] mr-2' : 'pl-3 border-l-[3px] ml-2'} border-amber-500/30`}>
                         <ul className="space-y-4">
                            <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0 shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium">
-                                الانتباه للتعليمات والتواصل وقت المعركة.
+                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium text-start">
+                                {t('instruction1')}
                               </p>
                            </li>
                            <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0 shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium">
-                                ممنوع ارسال قوات مستوى 8 او اقل الى قلعة الملك.
+                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium text-start">
+                                {t('instruction2')}
                               </p>
                            </li>
                            <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0 shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium">
-                                استمر في تعزيز المشاة والفرسان فقط والشفاء دوماً عندما تكون في قلعة الملك او الابراج.
+                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium text-start">
+                                {t('instruction3')}
                               </p>
                            </li>
                            <li className="flex flex-col gap-2">
                               <div className="flex items-start gap-3">
                                 <div className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0 shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-                                <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium">
-                                  شفاء القوات يكون من خلال مساعدة التحالف.
+                                <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium text-start">
+                                  {t('instruction4')}
                                 </p>
                               </div>
-                              <div className="flex items-center gap-2 mr-5">
+                              <div className={`flex items-center gap-2 ${language === 'ar' ? 'mr-5' : 'ml-5'}`}>
                                 <p className="text-xs sm:text-sm text-gray-400 font-medium">
-                                  ملاحظة: يوصي بمشاهدة هذا الفيديو للتعلم:
+                                  {t('watchVideo')}
                                 </p>
                                 <button 
                                   onClick={openYoutubeModal} 
-                                  className="flex items-center justify-center shrink-0 w-8 h-8 bg-red-600/90 text-white hover:bg-red-500 hover:scale-105 rounded-full transition-all shadow-md"
+                                  className={`flex items-center justify-center shrink-0 w-8 h-8 bg-red-600/90 text-white hover:bg-red-500 hover:scale-105 rounded-full transition-all shadow-md ${language === 'en' ? 'ml-2' : ''}`}
                                   title="مشاهدة الفيديو"
                                 >
-                                  <Youtube className="w-4 h-4 ml-0.5" />
+                                  <Youtube className={`w-4 h-4 ${language === 'ar' ? 'ml-0.5' : 'mr-0.5'}`} />
                                 </button>
                               </div>
                            </li>
                            <li className="flex items-start gap-3">
                               <div className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0 shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium">
-                                <span className="font-bold text-amber-400">استبدال الابطال:</span> بعد الهجوم الناجح ارسل جورودن او هاورد للدفاع / قبل وصوله بقليل اسحب تشينكو ليدخل بطل دفاعي.
+                              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-medium text-start">
+                                <span className="font-bold text-amber-400">{t('swapHeroes')}</span> {t('swapHeroesDesc')}
                               </p>
                            </li>
                         </ul>
@@ -596,42 +610,42 @@ export default function Home() {
                          <div className="p-2.5 rounded-lg bg-red-500/20 text-red-500 shrink-0 shadow-[0_0_10px_rgba(239,68,68,0.3)]">
                            <Swords className="w-5 h-5" />
                          </div>
-                         <h3 className="text-lg sm:text-xl font-bold text-red-100">الخصوم <span className="text-gray-400 font-medium text-sm ml-2">(التحالفات المعادية)</span></h3>
+                         <h3 className="text-lg sm:text-xl font-bold text-red-100">{t('enemiesTitle')} <span className="text-gray-400 font-medium text-sm mx-2">{t('enemyAlliances')}</span></h3>
                       </div>
                       <div className="mt-4 space-y-6">
                         {/* DSN Alliance */}
                         <div>
-                           <h4 className="text-xl font-black text-red-400 mb-3 tracking-wider flex items-center pr-3 border-r-[3px] border-red-500/50">
-                             تحالف DSN
+                           <h4 className={`text-xl font-black text-red-400 mb-3 tracking-wider flex items-center ${language === 'ar' ? 'pr-3 border-r-[3px]' : 'pl-3 border-l-[3px]'} border-red-500/50`}>
+                             {t('allianceDSN')}
                            </h4>
                            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2 w-full mx-auto sm:mx-0">
                               <CharacterCard name="Ymfalex115" gradient="from-red-600 to-red-800" size="small" />
                               <CharacterCard name="hank" gradient="from-red-600 to-red-800" size="small" />
                            </div>
-                           <p className="mt-3 text-sm sm:text-base text-gray-300 font-medium">
-                             يمتلكون <span className="text-red-400 font-bold">15 شخص</span> لديه قوات T9.
+                           <p className="mt-3 text-sm sm:text-base text-gray-300 font-medium text-start">
+                             {t('dsnStats')} <span className="text-red-400 font-bold mx-1">{t('persons15')}</span> {t('hasT9')}
                            </p>
                         </div>
 
                         {/* KGM Alliance */}
                         <div>
-                           <h4 className="text-xl font-black text-red-400 mb-3 tracking-wider flex items-center pr-3 border-r-[3px] border-red-500/50">
-                             تحالف KGM
+                           <h4 className={`text-xl font-black text-red-400 mb-3 tracking-wider flex items-center ${language === 'ar' ? 'pr-3 border-r-[3px]' : 'pl-3 border-l-[3px]'} border-red-500/50`}>
+                             {t('allianceKGM')}
                            </h4>
                            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2 w-full mx-auto sm:mx-0">
                               <CharacterCard name="Idle" gradient="from-red-600 to-red-800" size="small" />
                               <CharacterCard name="King Strong" gradient="from-red-600 to-red-800" size="small" />
                               <CharacterCard name="Esrarengiz" gradient="from-red-600 to-red-800" size="small" />
                            </div>
-                           <p className="mt-3 text-sm sm:text-base text-gray-300 font-medium">
-                             يمتلكون <span className="text-red-400 font-bold">21 شخص</span> لديه قوات T9.
+                           <p className="mt-3 text-sm sm:text-base text-gray-300 font-medium text-start">
+                             {t('dsnStats')} <span className="text-red-400 font-bold mx-1">{t('persons21')}</span> {t('hasT9')}
                            </p>
                         </div>
 
                         <div className="flex items-start gap-3 bg-black/20 p-3 rounded-lg border border-red-500/20">
                            <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
-                           <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                             هؤلاء هم الحيتان الأقوى ضدنا، وهم الخطر الأكبر ويجب التعاون للتصدي لهجماتهم.
+                           <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium text-start">
+                             {t('whalesWarning')}
                            </p>
                         </div>
                       </div>
@@ -644,21 +658,20 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-orange-500/10 via-transparent to-cyan-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center sm:text-right">التشكيل الأساسي</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center sm:text-start">{t('mainFormation')}</h2>
                   
                   <div className="space-y-8 relative">
                     {/* section 1 */}
                     <div>
                       <div className="flex items-center gap-2 mb-4 justify-center sm:justify-start">
                         <Crown className="w-5 h-5 text-cyan-400" />
-                        <h3 className="text-lg font-bold text-cyan-50">قادة قلعة الملك</h3>
+                        <h3 className="text-lg font-bold text-cyan-50">{t('castleLeaders')}</h3>
                       </div>
                       <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
                         {kingsLeaders.map(name => (
@@ -671,7 +684,7 @@ export default function Home() {
                     <div>
                       <div className="flex items-center gap-2 mb-4 justify-center sm:justify-start">
                         <Building2 className="w-5 h-5 text-orange-400" />
-                        <h3 className="text-lg font-bold text-orange-50">قادة الأبراج</h3>
+                        <h3 className="text-lg font-bold text-orange-50">{t('towerLeaders')}</h3>
                       </div>
                       <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
                         {towerLeaders.map(name => (
@@ -684,7 +697,7 @@ export default function Home() {
                     <div>
                       <div className="flex items-center gap-2 mb-4 justify-center sm:justify-start">
                         <Users className="w-5 h-5 text-gray-400" />
-                        <h3 className="text-lg font-bold text-gray-100">داعمين قلعة الملك الأساسي</h3>
+                        <h3 className="text-lg font-bold text-gray-100">{t('castleMainSupporters')}</h3>
                       </div>
                       <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2 w-full mx-auto sm:mx-0">
                         {kingsSupporters.map(name => (
@@ -693,8 +706,8 @@ export default function Home() {
                       </div>
                       <div className="mt-6 bg-cyan-950/30 border border-cyan-500/20 rounded-xl p-4 text-center shadow-inner">
                         <p className="text-cyan-200 text-sm sm:text-base font-semibold leading-relaxed">
-                          <span className="text-cyan-400 font-bold block mb-1">ملاحظة هامة</span>
-                          هؤلاء داعمين قلعة الملك الأساسي. في حالة كانت قلعة الملك ممتلئة، يرجى الذهاب ودعم الأبراج.
+                          <span className="text-cyan-400 font-bold block mb-1">{t('importantNote')}</span>
+                          {t('importantNoteDesc')}
                         </p>
                       </div>
                     </div>
@@ -703,7 +716,7 @@ export default function Home() {
                     <div className="pt-4 border-t border-white/10">
                       <div className="flex items-center gap-2 mb-4 justify-center sm:justify-start">
                         <Shield className="w-5 h-5 text-gray-400" />
-                        <h3 className="text-lg font-bold text-gray-100">داعمين الأبراج</h3>
+                        <h3 className="text-lg font-bold text-gray-100">{t('towerSupporters')}</h3>
                       </div>
                       <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2 w-full mx-auto sm:mx-0">
                         {towerSupporters.map(name => (
@@ -719,8 +732,8 @@ export default function Home() {
                       </div>
                       <div className="bg-purple-950/30 border border-purple-500/20 rounded-xl p-4 text-center shadow-inner w-full">
                         <p className="text-purple-200 text-sm sm:text-base font-semibold leading-relaxed">
-                          <span className="text-purple-400 font-bold block mb-1">دور متحرك</span>
-                          يتحرك حسب الظروف بين أن يساعد في استعادة قلعة الملك في رالي مزدوج مع بيرسيفال واحتلال الأبراج.
+                          <span className="text-purple-400 font-bold block mb-1">{t('mobileRole')}</span>
+                          {t('noTimeRole')}
                         </p>
                       </div>
                     </div>
@@ -732,8 +745,8 @@ export default function Home() {
                       </div>
                       <div className="bg-blue-950/30 border border-blue-500/20 rounded-xl p-4 text-center shadow-inner w-full">
                         <p className="text-blue-200 text-sm sm:text-base font-semibold leading-relaxed">
-                          <span className="text-blue-400 font-bold block mb-1">دور متحرك</span>
-                          يتحرك بين دعم قلعة الملك بقواته من المستوى 10 واحتلال الابراج (حسب الظروف).
+                          <span className="text-blue-400 font-bold block mb-1">{t('mobileRole')}</span>
+                          {t('lanceHiroRole')}
                         </p>
                       </div>
                     </div>
@@ -742,8 +755,8 @@ export default function Home() {
                     <div className="pt-4 mt-2 border-t border-white/10 flex flex-col items-center">
                        <div className="bg-orange-950/30 border border-orange-500/20 rounded-xl p-4 text-center shadow-inner w-full">
                          <p className="text-orange-200 text-sm sm:text-base font-semibold leading-relaxed">
-                           <span className="text-orange-400 font-bold block mb-1">تنبيه هام للجميع</span>
-                           يجب على الأعضاء الانقسام وتوزيع الدعم على عدة أماكن (الأبراج وقلعة الملك) وعدم الذهاب فقط إلى قلعة الملك.
+                           <span className="text-orange-400 font-bold block mb-1">{t('warningToAll')}</span>
+                           {t('warningToAllDesc')}
                          </p>
                        </div>
                     </div>
@@ -755,23 +768,22 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-cyan-500/10 via-transparent to-orange-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center">توزيع أماكن اللاعبين</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center">{t('playerPlacement')}</h2>
                   
                   <div className={`relative flex flex-col items-center transition-all duration-1000 ${!isAuthenticated ? 'blur-xl opacity-30' : ''}`}>
                     <div className="w-full">
                       <div className="flex flex-col items-center gap-3 mb-6">
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-100 text-sm font-bold shadow-[0_0_10px_rgba(34,211,238,0.1)]">
                           <Swords className="w-4 h-4 text-cyan-400" />
-                          <span>في المقدمة 6 مقاعد (قادة الحرب)</span>
+                          <span>{t('frontRowLeaders')}</span>
                         </div>
-                        <p className="text-xs sm:text-sm text-gray-400">بيرسيفال و no time في المنتصف</p>
+                        <p className="text-xs sm:text-sm text-gray-400">{t('midLeaders')}</p>
                       </div>
                       
                       <div className="grid grid-cols-6 gap-1 sm:gap-3 w-full max-w-2xl mx-auto">
@@ -789,14 +801,13 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.7 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-emerald-500/10 via-transparent to-blue-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center">رسم بياني لتمركز اللاعبين</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center">{t('placementChart')}</h2>
                   
                   <div className={`relative w-full h-[400px] sm:h-[480px] bg-[#121316]/80 rounded-2xl border border-white/5 mx-auto max-w-2xl shadow-inner overflow-hidden transition-all duration-1000 ${!isAuthenticated ? 'blur-xl opacity-30' : ''}`}>
                     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
@@ -804,30 +815,30 @@ export default function Home() {
                     {/* Castle */}
                     <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 sm:w-32 sm:h-32 bg-emerald-950/80 border-2 border-emerald-500 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] flex flex-col items-center justify-center z-10 transition-transform hover:scale-105">
                       <Crown className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-400 mb-1 sm:mb-2 drop-shadow-lg" />
-                      <span className="text-emerald-100 font-bold text-[10px] sm:text-sm">قلعة الملك</span>
+                      <span className="text-emerald-100 font-bold text-[10px] sm:text-sm">{t('kingCastleTitle')}</span>
                     </div>
 
                     {/* Towers */}
-                    <div className="absolute top-[10%] right-[8%] sm:right-[15%] w-14 h-14 sm:w-20 sm:h-20 bg-blue-950/80 border-2 border-blue-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg">
+                    <div className={`absolute top-[10%] ${language === 'ar' ? 'right-[8%] sm:right-[15%]' : 'left-[8%] sm:left-[15%]'} w-14 h-14 sm:w-20 sm:h-20 bg-blue-950/80 border-2 border-blue-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg`}>
                       <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400 mb-1" />
-                      <span className="text-blue-100 font-bold text-[8px] sm:text-xs text-center leading-tight">البرج<br/>الشمالي</span>
+                      <span className="text-blue-100 font-bold text-[8px] sm:text-xs text-center leading-tight whitespace-pre-line">{t('northTowerChart')}</span>
                     </div>
-                    <div className="absolute top-[10%] left-[8%] sm:left-[15%] w-14 h-14 sm:w-20 sm:h-20 bg-orange-950/80 border-2 border-orange-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg">
+                    <div className={`absolute top-[10%] ${language === 'ar' ? 'left-[8%] sm:left-[15%]' : 'right-[8%] sm:right-[15%]'} w-14 h-14 sm:w-20 sm:h-20 bg-orange-950/80 border-2 border-orange-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg`}>
                       <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-orange-400 mb-1" />
-                      <span className="text-orange-100 font-bold text-[8px] sm:text-xs text-center leading-tight">البرج<br/>الغربي</span>
+                      <span className="text-orange-100 font-bold text-[8px] sm:text-xs text-center leading-tight whitespace-pre-line">{t('westTowerChart')}</span>
                     </div>
-                    <div className="absolute top-[55%] right-[8%] sm:right-[15%] w-14 h-14 sm:w-20 sm:h-20 bg-red-950/80 border-2 border-red-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg">
+                    <div className={`absolute top-[55%] ${language === 'ar' ? 'right-[8%] sm:right-[15%]' : 'left-[8%] sm:left-[15%]'} w-14 h-14 sm:w-20 sm:h-20 bg-red-950/80 border-2 border-red-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg`}>
                       <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-red-400 mb-1" />
-                      <span className="text-red-100 font-bold text-[8px] sm:text-xs text-center leading-tight">البرج<br/>الشرقي</span>
+                      <span className="text-red-100 font-bold text-[8px] sm:text-xs text-center leading-tight whitespace-pre-line">{t('eastTowerChart')}</span>
                     </div>
-                    <div className="absolute top-[55%] left-[8%] sm:left-[15%] w-14 h-14 sm:w-20 sm:h-20 bg-purple-950/80 border-2 border-purple-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg">
+                    <div className={`absolute top-[55%] ${language === 'ar' ? 'left-[8%] sm:left-[15%]' : 'right-[8%] sm:right-[15%]'} w-14 h-14 sm:w-20 sm:h-20 bg-purple-950/80 border-2 border-purple-500/50 rounded-lg flex flex-col items-center justify-center z-10 shadow-lg`}>
                       <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400 mb-1" />
-                      <span className="text-purple-100 font-bold text-[8px] sm:text-xs text-center leading-tight">البرج<br/>الجنوبي</span>
+                      <span className="text-purple-100 font-bold text-[8px] sm:text-xs text-center leading-tight whitespace-pre-line">{t('southTowerChart')}</span>
                     </div>
 
                     {/* Players */}
                     <div className="absolute bottom-4 sm:bottom-6 w-full flex justify-center z-20">
-                      <div className="grid grid-cols-6 gap-1 w-max max-w-[95%] px-1">
+                      <div className={`grid grid-cols-6 gap-1 w-max max-w-[95%] px-1 ${language === 'ar' ? '' : 'flex-row-reverse'}`}>
                         {warLeaders.map((leader, i) => (
                           <CharacterCard key={i} name={leader.name} gradient={leader.gradient} size="small" />
                         ))}
@@ -841,24 +852,23 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-purple-500/10 via-transparent to-pink-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">تمركز القوات</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('troopPlacement')}</h2>
                   
-                  <div className="space-y-4 relative">
+                  <div className={`space-y-4 relative ${language === 'en' ? 'text-start' : ''}`}>
                     <div className="flex items-start gap-4 bg-white/5 rounded-xl p-4 sm:p-5 border border-white/5 hover:bg-white/10 transition-colors duration-300">
                       <div className="p-2 sm:p-3 rounded-lg bg-red-500/20 text-red-400 shrink-0 mt-1 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
                         <Swords className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       <div>
-                        <h4 className="text-lg sm:text-xl font-bold text-red-100 mb-1">خلف قادة الحرب</h4>
+                        <h4 className="text-lg sm:text-xl font-bold text-red-100 mb-1">{t('behindLeaders')}</h4>
                         <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                          يتمركز قلاع من يمتلك <span className="font-bold text-red-400">قوات مستوى 9/10</span>، حيث هم الوحيدون من يدخلون قلعة الملك.
+                          {t('behindLeadersDesc')}
                         </p>
                       </div>
                     </div>
@@ -868,11 +878,11 @@ export default function Home() {
                         <Shield className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col">
-                        <h4 className="text-lg sm:text-xl font-bold text-orange-100 mb-1">الخط الثاني</h4>
+                        <h4 className="text-lg sm:text-xl font-bold text-orange-100 mb-1">{t('secondLine')}</h4>
                         <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                          يتمركز <span className="font-bold text-orange-400">قوات مستوى 8/9</span>
+                          {t('secondLineDesc')}
                         </p>
-                        <span className="text-xs text-gray-500 mt-1">(تدعيم الأبراج).</span>
+                        <span className="text-xs text-gray-500 mt-1">{t('secondLineNote')}</span>
                       </div>
                     </div>
 
@@ -881,11 +891,11 @@ export default function Home() {
                         <Target className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col">
-                        <h4 className="text-lg sm:text-xl font-bold text-cyan-100 mb-1">الخط الثالث</h4>
+                        <h4 className="text-lg sm:text-xl font-bold text-cyan-100 mb-1">{t('thirdLine')}</h4>
                         <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                          بالخلف <span className="font-bold text-cyan-400">قوات المستوى 8</span>
+                          {t('thirdLineDesc')}
                         </p>
-                        <span className="text-xs text-red-500 font-bold mt-1">ممنوع دخول قلعة الملك</span>
+                        <span className="text-xs text-red-500 font-bold mt-1">{t('thirdLineNote')}</span>
                       </div>
                     </div>
                   </div>
@@ -896,38 +906,37 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1.0 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-blue-500/10 via-transparent to-cyan-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">تجهيز القوة</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('powerPrep')}</h2>
                   
                   <div className="flex flex-col gap-6 bg-white/5 rounded-xl p-4 sm:p-5 border border-white/5 hover:bg-white/10 transition-colors duration-300 relative">
                     <div className="flex items-start gap-4">
                       <div className="p-2 sm:p-3 rounded-lg bg-blue-500/20 text-blue-400 shrink-0 mt-1 shadow-[0_0_10px_rgba(59,130,246,0.2)]">
                         <Zap className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="w-full">
+                      <div className={`w-full ${language === 'en' ? 'text-start' : ''}`}>
                         <ul className="space-y-3 mt-1">
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                على <span className="font-bold text-blue-400">قادة الحرب</span> وجميع من يمتلك الصلاحية تشغيل بافات تعزيز القوة.
+                                {t('powerPrep1')}
                               </p>
                            </li>
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                تفعيل قدرات <span className="font-bold text-red-400">خفض قوة العدو</span> (Debuffs) لإضعاف خصومنا.
+                                {t('powerPrep2')}
                               </p>
                            </li>
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                هذا الإجراء <span className="font-bold text-green-400">أساسي وإلزامي</span> لرفع كفاءتنا العسكرية في الهجوم والدفاع.
+                                {t('powerPrep3')}
                               </p>
                            </li>
                         </ul>
@@ -950,37 +959,36 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1.2 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-red-950/30 border border-red-500/20 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-red-600/10 via-transparent to-orange-600/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">تنبيه حصار</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('siegeWarning')}</h2>
                   
                   <div className="flex items-start gap-4 bg-red-500/5 rounded-xl p-4 sm:p-5 border border-red-500/10 hover:bg-red-500/10 transition-colors duration-300 relative">
                     <div className="p-2 sm:p-3 rounded-lg bg-red-500/20 text-red-500 shrink-0 mt-1 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
                       <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <div className="w-full">
+                    <div className={`w-full ${language === 'en' ? 'text-start' : ''}`}>
                       <ul className="space-y-3">
                         <li className="flex items-start gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0 shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
                           <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                            الحذر من خبث <span className="font-bold text-red-400">تحالف DSN</span> ومحاولة تشتيت الإنتباه.
+                            {t('siegeCheck1')}
                           </p>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0 shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
                           <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                            من خلال التجسس أو الهجوم من خلال جندي واحد أو صنع رالي على قادة الحرب.
+                            {t('siegeCheck2')}
                           </p>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0 shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
                           <p className="text-sm sm:text-base text-red-300 leading-relaxed font-medium">
-                            جميع ما سيحدث من هذا هو هجوم وهمي لتشتيت الإنتباه.
+                            {t('siegeCheck3')}
                           </p>
                         </li>
                         <li className="flex items-start gap-3">
@@ -997,8 +1005,8 @@ export default function Home() {
 
               <div className="mt-20 sm:mt-28 relative flex flex-col items-center w-full">
                 <div className="relative inline-block">
-                  <div className="text-2xl sm:text-3xl md:text-4xl whitespace-nowrap font-black text-white pb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" dir="rtl">
-                    بداية المعركة A
+                  <div className="text-2xl sm:text-3xl md:text-4xl whitespace-nowrap font-black text-white pb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    {t('battleStartA')}
                   </div>
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_2px_rgba(34,211,238,0.6)]" />
                 </div>
@@ -1008,23 +1016,22 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1.4 }}
                   className="mt-12 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-cyan-500/10 via-transparent to-purple-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center">سباق الدخول</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-8 relative drop-shadow-md text-center">{t('entryRace')}</h2>
                   
                   <div className="flex flex-col items-center relative gap-4 sm:gap-6 py-6 border border-white/5 bg-white/5 rounded-2xl">
                     <p className="text-sm sm:text-base text-gray-200 text-center px-4 max-w-2xl font-medium mb-4">
-                      يذهبون كلاهما بهجوم فردي مع تعزيز سرعة المسير القصوى للدخول أولا دون أي تأخير.
+                      {t('entryRaceDesc')}
                     </p>
 
                     <div className="flex justify-center gap-12 sm:gap-32 relative z-10 w-full mb-8">
                       <CharacterCard name="no time" gradient="from-cyan-500 to-cyan-700" size="normal" />
-                      <CharacterCard name="بيرسيفال" gradient="from-cyan-500 to-cyan-700" size="normal" />
+                      <CharacterCard name="Percival" gradient="from-cyan-500 to-cyan-700" size="normal" />
                     </div>
                     
                     {/* SVG Data Structure Connection Lines */}
@@ -1043,31 +1050,31 @@ export default function Home() {
 
                     <div className="flex flex-col items-center gap-2 z-10 bg-black/60 p-3 sm:p-4 rounded-xl border border-cyan-500/30 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
                       <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-400" />
-                      <span className="font-bold text-cyan-100 text-sm sm:text-base">قلعة الملك</span>
+                      <span className="font-bold text-cyan-100 text-sm sm:text-base">{t('kingCastle')}</span>
                     </div>
 
                     <div className="mt-6 flex items-start gap-4 bg-orange-500/5 rounded-xl p-4 sm:p-5 border border-orange-500/20 max-w-2xl mx-4 sm:mx-8">
                        <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400 shrink-0 mt-0.5" />
-                       <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                         قد يفعل ذلك <span className="font-bold text-orange-400">Ymfalex115</span> أيضاً، مع أي تأخير تعني فشل الهجوم الفردي الأول.
+                       <p className="text-xs sm:text-sm text-gray-300 leading-relaxed text-start">
+                         {t('ymfalexWarning')}
                        </p>
                     </div>
 
                     {/* احتلال الابراج */}
                     <div className="mt-8 w-full max-w-4xl mx-auto px-4 sm:px-8">
-                      <h3 className="text-lg sm:text-xl font-black text-white mb-6 relative drop-shadow-md text-center">احتلال الابراج</h3>
-                      <div className="space-y-4 relative w-full text-right">
+                      <h3 className="text-lg sm:text-xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('towersOccupation')}</h3>
+                      <div className={`space-y-4 relative w-full ${language === 'ar' ? 'text-right' : 'text-left'}`}>
                         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 bg-white/5 rounded-xl p-4 border border-white/5 hover:bg-white/10 transition-colors duration-300">
                           <div className="shrink-0 flex items-center justify-center gap-2">
                             <CharacterCard name="보단이" gradient="from-orange-500 to-orange-700" />
                           </div>
-                          <div className="flex-1 mt-2 sm:mt-0 text-center sm:text-right">
-                            <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+                          <div className={`flex-1 mt-2 sm:mt-0 text-center ${language === 'ar' ? 'sm:text-right' : 'sm:text-left'}`}>
+                            <div className={`flex items-center justify-center sm:justify-start gap-2 mb-3`}>
                                <Shield className="w-5 h-5 text-orange-400" />
-                               <h4 className="text-base sm:text-lg font-bold text-orange-100">البرج الجنوبي</h4>
+                               <h4 className="text-base sm:text-lg font-bold text-orange-100">{t('southTower')}</h4>
                             </div>
                             <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                              (<span className="font-bold text-orange-400">보단이</span>) يذهب بشكل فردي من اجل ان يحتل البرج الجنوبي ويكون قائد هذا البرج طوال فترة المعركة ، حيث يطرد القوات الخطأ هو بمساعدة r5
+                              {t('sTowerRole')}
                             </p>
                           </div>
                         </div>
@@ -1076,13 +1083,13 @@ export default function Home() {
                           <div className="shrink-0 flex items-center justify-center gap-3">
                             <CharacterCard name="云公馆" gradient="from-orange-500 to-orange-700" />
                           </div>
-                          <div className="flex-1 mt-2 sm:mt-0 text-center sm:text-right">
-                            <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+                          <div className={`flex-1 mt-2 sm:mt-0 text-center ${language === 'ar' ? 'sm:text-right' : 'sm:text-left'}`}>
+                            <div className={`flex items-center justify-center sm:justify-start gap-2 mb-3`}>
                                <Target className="w-5 h-5 text-yellow-400" />
-                               <h4 className="text-base sm:text-lg font-bold text-yellow-100">البرج الشرقي</h4>
+                               <h4 className="text-base sm:text-lg font-bold text-yellow-100">{t('eastTower')}</h4>
                             </div>
                             <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                              (<span className="font-bold text-orange-400">云公馆</span>) يذهب بشكل فردي من اجل ان يحتل البرج الشرقي ويكون قائد هذا البرج طوال فترة المعركة ، حيث يطرد القوات الخطأ هو بمساعدة r5
+                              {t('eTowerRole')}
                             </p>
                           </div>
                         </div>
@@ -1091,13 +1098,13 @@ export default function Home() {
                           <div className="shrink-0 flex items-center justify-center gap-3">
                             <CharacterCard name="LanceHiro" gradient="from-gray-600 to-gray-800" />
                           </div>
-                          <div className="flex-1 mt-2 sm:mt-0 text-center sm:text-right">
-                            <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+                          <div className={`flex-1 mt-2 sm:mt-0 text-center ${language === 'ar' ? 'sm:text-right' : 'sm:text-left'}`}>
+                            <div className={`flex items-center justify-center sm:justify-start gap-2 mb-3`}>
                                <Zap className="w-5 h-5 text-purple-400" />
                                <h4 className="text-base sm:text-lg font-bold text-purple-100">LanceHiro</h4>
                             </div>
                             <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                               ينتظر ما سوف يحدث قليلاً ، في حال سيطرنا على قلعة الملك والبرج الشرقي والغربي ينتظر افضل القوات تدخل على تلك الأماكن ، ثم يفتح رالي على البرج الشمالي يجمع بين قوات 8 و 9 من أجل أخذ البرج الشمالي.
+                               {t('lanceHiroTowerRole')}
                             </p>
                           </div>
                         </div>
@@ -1111,24 +1118,23 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1.6 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-emerald-500/10 via-transparent to-blue-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">قيادة القلعة (بيرسيفال)</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('castleLeadershipTitle')}</h2>
                   
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-8 bg-white/5 rounded-xl p-5 sm:p-8 border border-white/5 relative">
                     
                     <div className="flex-1 space-y-6 w-full">
-                      <p className="text-sm sm:text-base text-gray-200 leading-relaxed border-r-2 border-emerald-400 pr-4">
-                        قائد قلعة الملك سيكون <span className="font-bold text-emerald-400">بيرسيفال</span>. يحصل على دعم القوات الأساسية <span className="font-bold text-emerald-400">مستوى 9/10 فقط</span>.
+                      <p className={`text-sm sm:text-base text-gray-200 leading-relaxed ${language === 'ar' ? 'border-r-2 pr-4' : 'border-l-2 pl-4'} border-emerald-400 text-start`}>
+                        {t('castleLeaderRole')}
                       </p>
                       
                       <div className="bg-black/30 p-4 rounded-xl border border-white/5 flex flex-col items-center">
-                        <h4 className="text-sm font-bold text-gray-400 mb-4 text-center">الأبطال المطلوبين</h4>
+                        <h4 className="text-sm font-bold text-gray-400 mb-4 text-center">{t('requiredHeroes')}</h4>
                         <div className="flex justify-center gap-4 flex-wrap">
                           <HeroCard name="هاورد" />
                           <HeroCard name="جورودن" />
@@ -1137,14 +1143,14 @@ export default function Home() {
 
                       <div className="flex items-start gap-3 bg-red-500/5 p-3 rounded-lg border border-red-500/10">
                         <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                        <p className="text-xs text-red-200 font-medium">
-                          بيرسيفال و r5 وحده يتحكم في إخراج القوات الغير مناسبة في قلعة الملك
+                        <p className="text-xs text-red-200 font-medium text-start">
+                          {t('kickWarning')}
                         </p>
                       </div>
                     </div>
 
                     <div className="shrink-0 flex flex-col items-center bg-black/40 p-4 rounded-2xl border border-white/10 shadow-lg w-full md:w-auto">
-                      <h4 className="text-sm font-bold text-white mb-3">تشكيل قوات الدفاع</h4>
+                      <h4 className="text-sm font-bold text-white mb-3">{t('defenseFormation')}</h4>
                       
                       <div className="h-32 w-32 relative">
                         <ResponsiveContainer width="100%" height="100%">
@@ -1172,15 +1178,15 @@ export default function Home() {
                       <div className="mt-4 flex flex-wrap gap-4 w-full justify-center text-xs sm:text-sm">
                         <div className="flex items-center gap-1.5">
                           <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_5px_#3b82f6]"></div>
-                          <span className="text-gray-200">مشاة 60%</span>
+                          <span className="text-gray-200">{t('infantry')} 60%</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <div className="w-3 h-3 rounded-full bg-orange-500 shadow-[0_0_5px_#f97316]"></div>
-                          <span className="text-gray-200">فرسان 20%</span>
+                          <span className="text-gray-200">{t('cavalry')} 20%</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <div className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e]"></div>
-                          <span className="text-gray-200">رماة 20%</span>
+                          <span className="text-gray-200">{t('marksmen')} 20%</span>
                         </div>
                       </div>
                     </div>
@@ -1193,28 +1199,27 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 2.2 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-red-950/30 border border-red-500/20 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-red-600/10 via-transparent to-orange-600/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">الخطة B (استعادة القلعة)</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('planB')}</h2>
                   
                   <div className="flex flex-col gap-6 items-center bg-red-500/5 rounded-xl p-5 sm:p-8 border border-red-500/10 hover:bg-red-500/10 transition-colors duration-300 relative">
                     <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium text-center max-w-2xl mt-2">
-                      في حال واجهنا مشاكل في <span className="font-bold text-white">الخطة A</span> وخسرنا قلعة الملك، سنقوم بصنع <span className="font-bold text-red-400">رالي مزدوج في نفس الثانية</span>:
+                       {t('planBDesc')}
                     </p>
                     
                     <div className="flex justify-center gap-6 sm:gap-12 flex-wrap w-full">
                       <div className="flex flex-col items-center gap-3">
                         <CharacterCard name="no time" gradient="from-cyan-500 to-cyan-700" size="normal" />
-                        <span className="text-xs text-red-300 bg-red-500/20 px-3 py-1 rounded-md border border-red-500/30 font-bold">الرالي الأول</span>
+                        <span className="text-xs text-red-300 bg-red-500/20 px-3 py-1 rounded-md border border-red-500/30 font-bold">{t('firstRally')}</span>
                       </div>
                       <div className="flex flex-col items-center gap-3">
-                        <CharacterCard name="بيرسيفال" gradient="from-cyan-500 to-cyan-700" size="normal" />
-                        <span className="text-xs text-red-300 bg-red-500/20 px-3 py-1 rounded-md border border-red-500/30 font-bold">الرالي الثاني</span>
+                        <CharacterCard name="Percival" gradient="from-cyan-500 to-cyan-700" size="normal" />
+                        <span className="text-xs text-red-300 bg-red-500/20 px-3 py-1 rounded-md border border-red-500/30 font-bold">{t('secondRally')}</span>
                       </div>
                     </div>
 
@@ -1222,14 +1227,14 @@ export default function Home() {
 
                     <div className="flex flex-col items-center gap-4 w-full bg-purple-500/5 rounded-xl p-4 sm:p-6 border border-purple-500/10">
                       <p className="text-sm sm:text-base text-purple-200 leading-relaxed font-medium text-center">
-                          مدعومة بقوات <span className="font-bold text-white px-1">9 و 10</span> من الأعضاء:
+                          {t('supportedBy')}
                       </p>
                       <div className="flex flex-col items-center gap-3 mt-2">
                         <CharacterCard name="تشينكو" gradient="from-purple-500 to-purple-700" size="normal" />
-                        <span className="text-xs text-purple-300 bg-purple-500/20 px-4 py-1.5 rounded-md border border-purple-500/30 font-bold">البطل الرئيسي - دعم الرالي للهجوم</span>
+                        <span className="text-xs text-purple-300 bg-purple-500/20 px-4 py-1.5 rounded-md border border-purple-500/30 font-bold max-w-sm text-center">{t('mainHero')}</span>
 
                         <div className="mt-4 shrink-0 flex flex-col items-center bg-black/40 p-4 rounded-2xl border border-white/10 shadow-lg w-full max-w-sm">
-                          <h4 className="text-sm font-bold text-white mb-3">تشكيل جنود الهجوم</h4>
+                          <h4 className="text-sm font-bold text-white mb-3">{t('attackFormation')}</h4>
                           
                           <div className="h-32 w-32 relative">
                             <ResponsiveContainer width="100%" height="100%">
@@ -1276,7 +1281,7 @@ export default function Home() {
                     <div className="mt-2 flex items-center justify-center p-3 sm:p-4 bg-red-500/10 rounded-lg border border-red-500/20 w-full max-w-lg mb-2">
                       <p className="text-sm sm:text-base text-red-200 font-bold flex items-center gap-2">
                         <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
-                        هذا الشيء مؤكد 100% من أجل استعادة قلعة الملك بعد خسارتها.
+                        {t('sure100')}
                       </p>
                     </div>
                   </div>
@@ -1287,14 +1292,13 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 2.6 }}
                   className="mt-8 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-red-500/10 via-transparent to-orange-500/10 blur-xl opacity-50 rounded-2xl" />
                   
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
                   
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">الخطة B (استعادة الأبراج)</h2>
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('planBRecoverTowers')}</h2>
                   
                   <div className="space-y-4 relative">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 bg-white/5 rounded-xl p-4 sm:p-5 border border-white/5 hover:bg-white/10 transition-colors duration-300">
@@ -1303,18 +1307,18 @@ export default function Home() {
                         <CharacterCard name="云公馆" gradient="from-orange-500 to-orange-700" />
                         <CharacterCard name="LanceHiro" gradient="from-purple-500 to-purple-700" />
                       </div>
-                      <div className="flex-1 mt-2 sm:mt-0 text-center sm:text-right">
-                        <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+                      <div className={`flex-1 mt-2 sm:mt-0 text-center ${language === 'ar' ? 'sm:text-right' : 'sm:text-left'}`}>
+                        <div className={`flex items-center justify-center sm:justify-start gap-2 mb-3`}>
                            <Swords className="w-5 h-5 text-red-400" />
-                           <h4 className="text-base sm:text-lg font-bold text-red-100">هجوم مضاد (رالي)</h4>
+                           <h4 className="text-base sm:text-lg font-bold text-red-100">{t('counterAttack')}</h4>
                         </div>
                         <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium mb-4">
-                          في حال خسارة الابراج فتح رالي من قبل قادة الابراج (<span className="font-bold text-orange-400">보단이</span> ، <span className="font-bold text-orange-400">云公馆</span> ، <span className="font-bold text-purple-400">LanceHiro</span>) مدعومة بقوات مستوى <span className="font-bold text-yellow-400">9/8</span> من اجل استعادة كل واحد برجه الموصي به.
+                          {t('counterAttackDesc')}
                         </p>
-                        <div className="inline-block bg-white/5 rounded-lg p-3 sm:px-4 w-full border border-white/10 text-center sm:text-right">
+                        <div className={`inline-block bg-white/5 rounded-lg p-3 sm:px-4 w-full border border-white/10 text-center ${language === 'ar' ? 'sm:text-right' : 'sm:text-left'}`}>
                           <p className="text-xs sm:text-sm text-yellow-200/80 font-bold flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2">
                              <Shield className="w-4 h-4 text-yellow-400 shrink-0" />
-                             الابراج تمنح قائد قلعة الملك زيادة في القوة الدفاعية والهجومية
+                             {t('towersBuff')}
                           </p>
                         </div>
                       </div>
@@ -1326,8 +1330,8 @@ export default function Home() {
               {/* NEW SECTION: تعليمات القيادة */}
               <div className="mt-20 sm:mt-28 relative flex flex-col items-center w-full">
                 <div className="relative inline-block">
-                  <div className="text-2xl sm:text-3xl md:text-4xl whitespace-nowrap font-black text-white pb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" dir="rtl">
-                    تعليمات القيادة
+                  <div className="text-2xl sm:text-3xl md:text-4xl whitespace-nowrap font-black text-white pb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    {t('leadershipInstructions')}
                   </div>
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent shadow-[0_0_12px_2px_rgba(168,85,247,0.6)]" />
                 </div>
@@ -1337,38 +1341,37 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 2.8 }}
                   className="mt-12 w-full max-w-4xl mx-auto backdrop-blur-md bg-black/40 border border-white/10 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-2xl"
-                  dir="rtl"
                 >
                   <div className="absolute -inset-x-10 -inset-y-10 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 blur-xl opacity-50 rounded-2xl" />
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
                   
-                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">أثناء وبعد المعركة</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mb-6 relative drop-shadow-md text-center">{t('duringAndAfter')}</h2>
                   
-                  <div className="space-y-4 relative">
+                  <div className="space-y-4 relative text-start">
                     <div className="flex items-start gap-4 bg-white/5 rounded-xl p-4 sm:p-5 border border-white/5 hover:bg-white/10 transition-colors duration-300">
                       <div className="p-2 sm:p-3 rounded-lg bg-blue-500/20 text-blue-400 shrink-0 mt-1 shadow-[0_0_10px_rgba(59,130,246,0.2)]">
                         <Users className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-bold text-blue-100 mb-2">تعليمات R4</h4>
+                        <h4 className="text-lg font-bold text-blue-100 mb-2">{t('r4Instructions')}</h4>
                         <ul className="space-y-2 mt-2">
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                توجيه الأعضاء وإرشادهم لفعل الشيء الصحيح وتجنب الأخطاء.
+                                {t('r4Rule1')}
                               </p>
                            </li>
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                يحق لهم إزالة الأعضاء الذين لا يستمعون للتعليمات.
+                                {t('r4Rule2')}
                               </p>
                            </li>
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                يتم تطبيق هذا الإجراء بشكل خاص على من يمتلك <span className="font-bold text-red-400">قوات مستوى أقل من 8</span> في حال الاستمرار بالخطأ.
+                                {t('r4Rule3')}
                               </p>
                            </li>
                         </ul>
@@ -1381,26 +1384,26 @@ export default function Home() {
                       </div>
                       <div>
                         <div className="mb-3">
-                          <h4 className="text-lg font-bold text-green-100">بعد احتلال قلعة الملك</h4>
-                          <span className="text-xs text-green-400/80 font-medium">(يحدث هذا بعد مرور ساعتين ونصف)</span>
+                          <h4 className="text-lg font-bold text-green-100">{t('afterOccupation')}</h4>
+                          <span className={`text-xs text-green-400/80 font-medium ${language === 'en' ? 'block mt-1' : ''}`}>{t('afterOccupationNote')}</span>
                         </div>
                         <ul className="space-y-2">
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                ضمان الفوز وتحقيق الهدف الأساسي للمعركة.
+                                {t('afterOcc1')}
                               </p>
                            </li>
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                يتحول القتال إلى قتال ودي لحصد النقاط وكسب المكافآت.
+                                {t('afterOcc2')}
                               </p>
                            </li>
                            <li className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0" />
                               <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-medium">
-                                يُسمح لجميع الأعضاء بالدخول إلى قلعة الملك والتصرف بحرية.
+                                {t('afterOcc3')}
                               </p>
                            </li>
                         </ul>
@@ -1421,11 +1424,11 @@ export default function Home() {
       {isYoutubeModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
           <div className="relative w-full max-w-sm sm:max-w-md bg-[#121316] rounded-2xl border border-white/10 overflow-hidden shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
-              <h3 className="text-white font-bold text-lg">فيديو تعليمي</h3>
+            <div className={`flex items-center justify-between p-4 border-b border-white/10 bg-white/5`}>
+              <h3 className={`text-white font-bold text-lg ${language === 'en' ? '' : 'text-right w-full'}`}>{t('youtubeModalTitle')}</h3>
               <button 
                 onClick={closeYoutubeModal} 
-                className="p-1.5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                className={`p-1.5 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors ${language === 'en' ? 'absolute right-4' : 'absolute left-4'}`}
                 title="إغلاق"
               >
                 <X className="w-5 h-5" />

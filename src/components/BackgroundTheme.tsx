@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export const SnowParticles = () => {
   return (
@@ -147,8 +148,9 @@ export const WolfEye = ({ theme, position }: { theme: 'ice' | 'fire', position: 
 }
 
 export const BackgroundTheme = ({ children }: { children: React.ReactNode }) => {
+  const { language } = useLanguage();
   return (
-    <div className="font-sans min-h-screen relative text-white selection:bg-white/20" dir="rtl">
+    <div className="font-sans min-h-screen relative text-white selection:bg-white/20" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Background Split Screen */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Right Side Pattern (FIRE) */}
