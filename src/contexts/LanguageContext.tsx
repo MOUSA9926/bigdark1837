@@ -375,6 +375,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
+    document.title = language === 'ar' ? "معركة قلعة الملك" : "King Castle Battle";
   }, [language]);
 
   const t = (key: TransKey): string => {
