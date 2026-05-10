@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Shield, Clock, Target, Crown, Building2, Users, Swords, Zap, AlertTriangle, ArrowDown, Youtube, ListChecks, Music, Pause, Play, X, PawPrint, Loader2, Globe } from "lucide-react";
+import { Shield, Clock, Target, Crown, Building2, Users, Swords, Zap, AlertTriangle, ArrowDown, Youtube, ListChecks, Music, Pause, Play, X, PawPrint, Loader2, Globe, ChevronDown } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { WolfEye, BackgroundTheme } from "../components/BackgroundTheme";
 import { auth } from "../lib/firebase";
@@ -268,7 +268,19 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const wasPlayingBeforeModal = useRef(false);
   const hasInteractedRef = useRef(false);
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const openYoutubeModal = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -385,14 +397,51 @@ export default function Home() {
             </button>
 
             {/* Language Selector */}
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center justify-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all group scale-95"
-              dir="ltr"
-            >
-              <Globe className="w-3 h-3 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-              <span className="text-[10px] font-bold tracking-widest">{language === 'en' ? 'AR' : 'EN'}</span>
-            </button>
+            <div className="relative h-full flex items-center" ref={langMenuRef}>
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="flex items-center justify-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all group scale-95"
+                dir="ltr"
+              >
+                <Globe className="w-3 h-3 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+                <span className="text-[10px] font-bold tracking-widest uppercase">{language}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              <AnimatePresence>
+                {isLangMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full mt-2 left-0 bg-[#121316]/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden min-w-[100px] z-[120]"
+                    dir="ltr"
+                  >
+                    <div className="flex flex-col py-1">
+                      <button
+                        onClick={() => { setLanguage('en'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'en' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('ar'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'ar' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        العربية
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('ko'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'ko' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        한국어
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 

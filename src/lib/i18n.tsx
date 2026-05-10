@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Language = 'en' | 'ar';
+type Language = 'en' | 'ar' | 'ko';
 
 interface LanguageContextType {
   language: Language;
+  setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
   t: (key: string) => string;
 }
@@ -251,11 +252,134 @@ const translations: Record<Language, Record<string, string>> = {
     'all_can_enter': 'يُسمح لجميع الأعضاء بالدخول إلى قلعة الملك والتصرف بحرية.',
     'tutorial_video': 'فيديو تعليمي',
     'close': 'إغلاق'
+  },
+  ko: {
+    'king_castle_plan_page': '국왕성 전투 계획',
+    'login': '로그인',
+    'password_placeholder': '비밀번호...',
+    'music_stop': '음악 정지',
+    'music_play': '음악 재생',
+    'music': '음악',
+    'king_castle_plan': '국왕성 전투 계획',
+    'plan_protected': '계획이 보호됨',
+    'need_login': '계획을 보려면 로그인해야 합니다',
+    'ask_password': '비밀번호를 요청하려면 리더에게 문의하세요 ',
+    'intro': '소개',
+    'battle_duration': '전투 지속 시간',
+    '5_hours': '5시간',
+    'required_time': '필요 시간 2.5시간',
+    'important_instructions': '중요 지침',
+    'instruction_1': '지침에 주의를 기울이고 전투 중 소통하세요.',
+    'instruction_2': '국왕성에 T8 이하 병력을 보내지 마세요.',
+    'instruction_3': '보병 및 기병 지원 병력만 보내고 국왕성이나 탑에 있을 때는 항상 치료하세요.',
+    'instruction_4': '연맹 지원을 통해 병력을 치료하세요.',
+    'instruction_5': '참고: 학습을 위해 이 비디오를 시청하는 것이 좋습니다:',
+    'heroes_replacement': '영웅 교체:',
+    'instruction_6': '성공적인 공격 후 Jordon 또는 Howard를 방어에 보내거나, 그들이 도착하기 직전에 방어 영웅이 들어갈 수 있도록 Chenkuo를 빼세요.',
+    'enemies': '적군',
+    'enemy_alliances': '(적대 연맹)',
+    'dsn_alliance': 'DSN 연맹',
+    't9_players': '명의 플레이어가 T9 병력을 보유하고 있습니다.',
+    'kgm_alliance': 'KGM 연맹',
+    'whales_warning': '이들은 우리에게 가장 위협적인 고래들이므로 그들의 공격에 대처하기 위해 협력해야 합니다.',
+    'main_formation': '주요 진형',
+    'kings_castle_leaders': '국왕성 리더',
+    'tower_leaders': '탑 리더',
+    'kings_castle_support': '국왕성 지원 병력',
+    'important_note': '중요 참고 사항',
+    'kings_support_note': '이들은 주요 국왕성 지원 병력입니다. 국왕성이 꽉 차면 탑으로 가서 지원하세요.',
+    'tower_support': '탑 지원 병력',
+    'mobile_role': '유동적 역할',
+    'no_time_role': 'Percival과 더블 랠리로 국왕성을 탈환하거나 탑을 방어하는 유동적인 역할.',
+    'lancehiro_role': 'T10 병력으로 국왕성을 지원하거나 탑을 방어하는 유동적인 역할.',
+    'important_alert': '모두를 위한 중요 알림',
+    'spread_out_alert': '멤버들은 흩어져서 여러 위치(탑 및 국왕성)에 지원을 분산해야 하며 국왕성에만 가지 마세요.',
+    'player_placement': '플레이어 배치',
+    'front_seats': '앞줄 6자리 (전쟁 리더)',
+    'mid_seats': 'Percival과 no time은 중간에 위치',
+    'placement_chart': '플레이어 배치도',
+    'loading': '로딩 중...',
+    'king_castle': '국왕성',
+    'north_tower': '북쪽\n탑',
+    'west_tower': '서쪽\n탑',
+    'east_tower': '동쪽\n탑',
+    'south_tower': '남쪽\n탑',
+    'types_of_troops': '내부 병력 종류',
+    'expected_troops_in_rally': '랠리 공격 예상 병력 (T10 전용)',
+    'infantry': '보병',
+    'cavalry': '기병',
+    'archers': '궁병',
+    'rally_leaders': '성 및 탑 공격 랠리 리더',
+    'troop_positioning': '병력 배치',
+    'behind_war_leaders': '전쟁 리더 뒤',
+    'nineth_level_troops': '국왕성에 들어가는 유일한 병력이므로 9/10 레벨 병력을 가진 성이 여기에 배치됩니다.',
+    'second_line': '두 번째 줄',
+    'eighth_level_troops': '8/9 레벨 병력이 여기에 배치됩니다',
+    'tower_support_desc': '(탑 지원).',
+    'third_line': '세 번째 줄',
+    'seventh_level_troops': '뒤쪽에 8 레벨 병력',
+    'no_king_castle': '국왕성 진입 금지',
+    'power_prep': '전력 준비',
+    'use_buffs': '전쟁 리더와 권한이 있는 모든 사람은 전력 강화 버프를 사용해야 합니다.',
+    'use_debuffs': '적의 전력을 약화시키기 위해 적 전력 감소(디버프)를 활성화하세요.',
+    'mandatory_prep': '이 활동은 공격 및 방어 시 군사 효율을 높이기 위한 필수적이고 의무적인 활동입니다.',
+    'siege_alert': '공성 경고',
+    'dsn_trick': 'DSN 연맹의 악의와 시선 분산 시도에 주의하세요.',
+    'dsn_trick_desc': '정탐, 단일 병사로 공격하거나 전쟁 리더에 랠리를 생성하는 방법.',
+    'dsn_trick_desc_2': '이 모든 것은 주의를 돌리기 위한 가짜 공격입니다.',
+    'dsn_trick_desc_3': '신경 쓰거나 걱정하지 마세요.',
+    'battle_start': '전투 시작 A',
+    'entry_race': '입장 경쟁',
+    'entry_race_desc': '지연 없이 가장 먼저 진입하기 위해 최대 행군 속도 부스트를 사용한 개별 공격으로 진행합니다.',
+    'ymfalex_warning': 'Ymfalex115도 이를 시도할 수 있습니다. 지연은 첫 개별 공격의 실패를 의미합니다.',
+    'tower_occupation': '탑 점령',
+    'boda_role': '(보단이) 단독으로 이동하여 남쪽 탑을 점령하고 전투 내내 그 탑의 리더가 됩니다. r5의 도움으로 잘못된 병력을 몰아냅니다.',
+    'yun_role': '(云公馆) 단독으로 이동하여 동쪽 탑을 점령하고 전투 내내 그 탑의 리더가 됩니다. r5의 도움으로 잘못된 병력을 몰아냅니다.',
+    'lancehiro_strat': '상황을 지켜보며 기다립니다. 만약 우리가 국왕성과 동/서 탑을 점령하면 그곳에 최상위 병력이 진입하길 기다렸다가 T8과 T9 병력을 조합하여 북쪽 탑에 랠리를 열어 점령합니다.',
+    'percival_command': '성 지휘관 (Percival)',
+    'percival_strat': '국왕성 리더는 Percival입니다. 9/10 레벨 병력만의 지원을 받습니다.',
+    'required_heroes': '필요 영웅',
+    'howard': 'Howard',
+    'gordon': 'Gordon',
+    'jordan': 'Gordon',
+    'percival_r5_control': 'Percival과 r5만이 국왕성에서 잘못된 병력을 추방할 권한을 가집니다.',
+    'defense_formation': '방어 병력 진형',
+    'infantry_60': '보병 60%',
+    'cavalry_20': '기병 20%',
+    'archers_20': '궁병 20%',
+    'plan_b_castle': '플랜 B (성 탈환)',
+    'plan_b_castle_desc': '플랜 A에 문제가 생겨 국왕성을 잃게 되면 정확히 같은 초에 더블 랠리를 진행합니다:',
+    'first_rally': '첫 번째 랠리',
+    'second_rally': '두 번째 랠리',
+    'supported_by_9_10': '멤버들로부터 9 및 10 레벨 병력 지원:',
+    'main_hero_support': '주요 영웅 - 공격을 위한 랠리 지원',
+    'attack_formation': '공격 병력 진형',
+    'infantry_50': '보병 50%',
+    'archers_30': '궁병 30%',
+    'plan_b_sure': '이것은 국왕성을 잃은 후 탈환하기 위한 100% 확인된 방법입니다.',
+    'plan_b_towers': '플랜 B (탑 탈환)',
+    'counter_attack': '반격 (랠리)',
+    'tower_rally_desc': '탑을 빼앗기면 탑 리더(보단이, 云公馆, LanceHiro)가 각자의 탑을 되찾기 위해 9/8 레벨 병력 지원을 받아 랠리를 엽니다.',
+    'tower_buffs': '탑은 국왕성 리더에게 방어력과 공격력을 증가시킵니다.',
+    'leadership_instructions': '리더십 지침',
+    'during_after_battle': '전투 중 및 전투 후',
+    'r4_instructions': 'R4 지침',
+    'guide_members': '멤버들을 이끌고 올바른 행동을 하도록 안내하며 실수를 방지하세요.',
+    'kick_members': '지침을 따르지 않는 멤버를 제거할 권한이 있습니다.',
+    'kick_t8_below': '이 조치는 지속적으로 실수를 범하는 경우 8 레벨 미만 병력을 보유한 자에게 특히 적용됩니다.',
+    'after_castle_occupation': '국왕성 점령 후',
+    'after_two_half_hours': '(이는 두 시간 반 후에 발생합니다)',
+    'secure_win': '승리 확보 및 전투의 주요 목표 달성.',
+    'friendly_fight': '전투는 포인트를 수집하고 보상을 얻기 위한 친선 전투로 전환됩니다.',
+    'all_can_enter': '모든 멤버가 국왕성에 진입하여 자유롭게 행동할 수 있습니다.',
+    'tutorial_video': '튜토리얼 비디오',
+    'close': '닫기'
   }
 };
 
 const LanguageContext = createContext<LanguageContextType>({
   language: 'en',
+  setLanguage: () => {},
   toggleLanguage: () => {},
   t: () => '',
 });
@@ -269,7 +393,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [language]);
 
   const toggleLanguage = () => {
-    setLanguage(prev => prev === 'en' ? 'ar' : 'en');
+    setLanguage(prev => prev === 'en' ? 'ar' : prev === 'ar' ? 'ko' : 'en');
   };
 
   const t = (key: string) => {
@@ -277,7 +401,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
