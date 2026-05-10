@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../lib/i18n';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -8,7 +8,7 @@ interface SplashScreenProps {
 
 export function SplashScreen({ onFinish }: SplashScreenProps) {
   const [stage, setStage] = useState(0);
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Stage 1: Show logo
@@ -150,7 +150,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
                 <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-white rounded-full" />
                 <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
               </div>
-              <span className="text-[10px] text-gray-500 tracking-wider uppercase" dir={language === 'ar' ? 'rtl' : 'ltr'}>{t('loading')}</span>
+              <span className="text-[10px] text-gray-500 tracking-wider uppercase">{t('loading')}</span>
             </motion.div>
           </div>
         </motion.div>
