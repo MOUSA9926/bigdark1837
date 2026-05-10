@@ -885,7 +885,7 @@ export default function Home() {
                         <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
                           {t('eighth_level_troops')}
                         </p>
-                        <span className="text-xs text-gray-500 mt-1">{t('tower_support')}</span>
+                        <span className="text-xs text-gray-500 mt-1">{t('tower_support_desc')}</span>
                       </div>
                     </div>
 
