@@ -415,7 +415,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full mt-2 left-0 bg-[#121316]/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden min-w-[100px] z-[120]"
+                    className={`absolute top-full mt-2 ${language === 'ar' ? 'left-0 origin-top-left' : 'right-0 origin-top-right'} bg-[#121316]/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden min-w-[120px] z-[120]`}
                     dir="ltr"
                   >
                     <div className="flex flex-col py-1">
@@ -436,6 +436,30 @@ export default function Home() {
                         className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'ko' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
                       >
                         한국어
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('tr'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'tr' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        Türkçe
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('zh'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'zh' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        简体中文
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('pt'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'pt' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        Português
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('es'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors ${language === 'es' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        Español
                       </button>
                     </div>
                   </motion.div>
