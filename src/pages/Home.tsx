@@ -461,6 +461,12 @@ export default function Home() {
                       >
                         Español
                       </button>
+                      <button
+                        onClick={() => { setLanguage('id'); setIsLangMenuOpen(false); }}
+                        className={`flex items-center px-4 py-2 text-xs font-medium hover:bg-white/10 transition-colors whitespace-nowrap ${language === 'id' ? 'text-cyan-400 bg-white/5' : 'text-gray-300'}`}
+                      >
+                        Indonesia
+                      </button>
                     </div>
                   </motion.div>
                 )}
