@@ -1274,6 +1274,10 @@ export default function Home() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <div className="w-3 h-3 rounded-full bg-orange-500 shadow-[0_0_5px_#f97316]"></div>
+                              <span className="text-gray-200">{t('cavalry_20')}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e]"></div>
                               <span className="text-gray-200">{t('archers_30')}</span>
                             </div>
                           </div>
