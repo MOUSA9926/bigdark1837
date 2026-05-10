@@ -360,36 +360,38 @@ export default function Home() {
   return (
     <BackgroundTheme>
       <main className="min-h-screen flex flex-col items-center justify-start relative overflow-x-hidden pb-20 pt-16 sm:pt-24 lg:pt-32">
-        <button
-          onClick={toggleLanguage}
-          className="fixed top-2.5 left-4 sm:top-4 sm:left-4 z-[100] flex items-center justify-center gap-2 px-3 py-2 bg-black/60 border border-white/15 rounded-lg text-white font-medium backdrop-blur-md hover:bg-black/80 hover:border-white/30 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] group"
-          dir="ltr"
-        >
-          <Globe className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-          <span className="text-xs sm:text-sm tracking-widest">{language === 'en' ? 'العربية' : 'EN'}</span>
-        </button>
-
-        {/* Floating Player Bar */}
-        <div className="fixed top-0 inset-x-0 z-[60] bg-[#080b0f]/90 backdrop-blur-md border-b border-white/5 shadow-sm">
-          <div className="w-full h-8 flex items-center justify-center mx-auto max-w-7xl px-4 lg:px-8">
+        {/* Floating Top Bar (Player & Language) */}
+        <div className="fixed top-0 inset-x-0 z-[100] bg-[#080b0f]/90 backdrop-blur-md border-b border-white/5 shadow-sm">
+          <div className="w-full h-9 flex items-center justify-between mx-auto max-w-7xl px-4 lg:px-8">
+            {/* Music Player */}
             <button 
               onClick={togglePlay}
-              className="flex items-center gap-2 group w-full h-full"
+              className="flex items-center gap-2 group h-full"
               title={isPlaying ? t('music_stop') : t('music_play')}
             >
               <div className={`transition-all duration-300 ${isPlaying ? 'text-cyan-400' : 'text-gray-400 group-hover:text-white'}`}>
                 {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
               </div>
-              <span className="text-xs font-medium text-gray-400 group-hover:text-gray-200 transition-colors duration-300">
+              <span className="text-[11px] font-medium text-gray-400 group-hover:text-gray-200 transition-colors duration-300">
                 {isPlaying ? t('music') : t('music_play')}
               </span>
               {isPlaying && (
-                <div className="flex items-end h-2.5 gap-[2px] mr-2 opacity-80">
+                <div className={`flex items-end h-2.5 gap-[2px] opacity-80 ${language === 'ar' ? 'mr-1' : 'ml-1'}`}>
                   <motion.div animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
                   <motion.div animate={{ height: ["100%", "30%", "100%"] }} transition={{ repeat: Infinity, duration: 0.8, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
                   <motion.div animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }} className="w-0.5 bg-cyan-400 rounded-none" />
                 </div>
               )}
+            </button>
+
+            {/* Language Selector */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center justify-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all group scale-95"
+              dir="ltr"
+            >
+              <Globe className="w-3 h-3 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+              <span className="text-[10px] font-bold tracking-widest">{language === 'en' ? 'AR' : 'EN'}</span>
             </button>
           </div>
         </div>
